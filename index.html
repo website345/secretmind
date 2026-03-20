@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>secretmind | Friendship Quiz</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Orbitron:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Home View -->
+        <main id="home-view" class="view active-view">
+            <header class="header">
+                <img src="logo.png" alt="Logo Secretmind" class="site-logo">
+                <h1 class="site-title">secretmind</h1>
+                <h2 id="challenge-subtitle" class="subtitle" style="display: none;"></h2>
+            </header>
+
+            <nav class="links-container">
+                <button id="main-action-btn" class="link-btn primary-btn">
+                    <span class="btn-text">CREATE MY FRIENDSHIP QUIZ</span>
+                    <span class="btn-glitch"></span>
+                </button>
+            </nav>
+        </main>
+
+        <!-- Quiz View -->
+        <main id="quiz-view" class="view">
+            <!-- Step 1: Name Input -->
+            <section id="name-step" class="quiz-step">
+                <h2 class="quiz-title">IDENTIFICATION</h2>
+                <div class="input-group">
+                    <label id="name-prompt" for="player-name">What's your name?</label>
+                    <input type="text" id="player-name" placeholder="Enter your name..." autocomplete="off">
+                </div>
+                <button id="begin-quiz-btn" class="action-btn">Continue</button>
+            </section>
+
+            <!-- Step 2: Questions -->
+            <section id="question-step" class="quiz-step">
+                <div class="progress-bar">
+                    <div id="progress-fill"></div>
+                </div>
+                <div class="question-wrapper">
+                    <h2 id="question-text" class="question-text">Question ?</h2>
+                    <div id="answers-container" class="answers-container">
+                        <!-- Answers injected via JS -->
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="quiz-navigation">
+                        <button id="btn-back" class="nav-btn">&larr; Back</button>
+                        <button id="btn-skip" class="nav-btn">Skip &rarr;</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Result -->
+            <section id="result-step" class="quiz-step">
+                <h2 id="result-title" class="result-title">RESULT</h2>
+                <div id="score-display" class="score-display" style="display: none;">
+                    <span id="final-score">0</span><span class="score-max">/<span id="total-score">5</span></span>
+                </div>
+                <p id="engagement-text" class="engagement-text"></p>
+                <div id="action-section" class="action-section">
+                    <!-- Buttons injected via JS -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
