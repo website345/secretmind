@@ -144,6 +144,7 @@ function init() {
             questionOrder  = atob(orderParam).split(',').map(Number);
             totalScoreEl.textContent = questionOrder.length * 2;
             btnSkip.style.display = 'none';
+            btnBack.style.display = 'none';
             challengeSubtitle.style.display = 'block';
 
             try {
@@ -300,7 +301,7 @@ function handleAnswer(selectedIndex) {
         } else {
             showResults();
         }
-    }, selectedIndex === -1 ? 0 : (isChallengeMode ? 1200 : 600));
+    }, selectedIndex === -1 ? 0 : (isChallengeMode ? 1500 : 800));
 }
 
 function showResults() {

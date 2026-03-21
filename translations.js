@@ -60,7 +60,6 @@ const TRANSLATIONS = {
             { question: "Quel type de dessert préfères-tu ?", answers: ["Gâteau", "Glace", "Bonbons", "Fruits"] },
             { question: "Quelle ville rêves-tu de visiter ?", answers: ["New York", "Tokyo", "Paris", "Londres"] },
             { question: "Quel animal sauvage préfères-tu ?", answers: ["Lion", "Dauphin", "Aigle", "Panda"] },
-            { question: "Quel est ton passe-temps préféré pendant le weekend ?", answers: ["Regarder des films / séries", "Sortir avec des amis", "Jouer à des jeux", "Apprendre quelque chose de nouveau"] }
         ]
     },
     en: {
@@ -120,7 +119,6 @@ const TRANSLATIONS = {
             { question: "What type of dessert do you prefer?", answers: ["Cake", "Ice cream", "Candy", "Fruits"] },
             { question: "Which city do you dream of visiting?", answers: ["New York", "Tokyo", "Paris", "London"] },
             { question: "What is your favorite wild animal?", answers: ["Lion", "Dolphin", "Eagle", "Panda"] },
-            { question: "What is your favorite weekend activity?", answers: ["Watching movies / series", "Going out with friends", "Playing games", "Learning something new"] }
         ]
     },
     ar: {
@@ -180,7 +178,6 @@ const TRANSLATIONS = {
             { question: "ما نوع الحلوى التي تفضلها؟", answers: ["كعكة", "آيس كريم", "حلوى", "فواكه"] },
             { question: "أي مدينة تحلم بزيارتها؟", answers: ["نيويورك", "طوكيو", "باريس", "لندن"] },
             { question: "ما حيوانك البري المفضل؟", answers: ["أسد", "دولفين", "نسر", "باندا"] },
-            { question: "ما نشاطك المفضل في عطلة نهاية الأسبوع؟", answers: ["مشاهدة أفلام / مسلسلات", "الخروج مع الأصدقاء", "اللعب", "تعلم شيء جديد"] }
         ]
     }
 };
