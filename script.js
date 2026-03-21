@@ -201,8 +201,10 @@ function init() {
     const orderParam = urlParams.get('q');
 
     // Track total visits
-    let visits = parseInt(localStorage.getItem('site_visits') || '0');
-    localStorage.setItem('site_visits', visits + 1);
+    try {
+        let visits = parseInt(localStorage.getItem('site_visits') || '0');
+        localStorage.setItem('site_visits', visits + 1);
+    } catch(e) {}
 
     if (creatorParam && answersParam && orderParam) {
         isChallengeMode = true;
@@ -221,8 +223,10 @@ function init() {
             namePrompt.textContent = "What's your name, challenger?";
 
             // Track challenges taken
-            let challenges = parseInt(localStorage.getItem('challenges_taken') || '0');
-            localStorage.setItem('challenges_taken', challenges + 1);
+            try {
+                let challenges = parseInt(localStorage.getItem('challenges_taken') || '0');
+                localStorage.setItem('challenges_taken', challenges + 1);
+            } catch(e) {}
 
         } catch (e) {
             console.error("Invalid link");
@@ -273,8 +277,10 @@ beginQuizBtn.addEventListener('click', () => {
         creatorName = name;
         
         // Track quizzes created
-        let quizzes = parseInt(localStorage.getItem('quizzes_created') || '0');
-        localStorage.setItem('quizzes_created', quizzes + 1);
+        try {
+            let quizzes = parseInt(localStorage.getItem('quizzes_created') || '0');
+            localStorage.setItem('quizzes_created', quizzes + 1);
+        } catch(e) {}
     }
 
     startQuiz();
@@ -496,7 +502,10 @@ init();
 
 // --- THEME TOGGLE LOGIC ---
 const themeToggleBtn = document.getElementById('theme-toggle');
-const currentTheme = localStorage.getItem('theme') || 'dark';
+let currentTheme = 'dark';
+try {
+    currentTheme = localStorage.getItem('theme') || 'dark';
+} catch(e) {}
 
 if (currentTheme === 'light') {
     document.body.classList.add('light-theme');
@@ -509,5 +518,7 @@ themeToggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
     const isLight = document.body.classList.contains('light-theme');
     themeToggleBtn.textContent = isLight ? 'Dark Mode' : 'Light Mode';
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    try {
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    } catch(e) {}
 });
