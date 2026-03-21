@@ -1,206 +1,136 @@
-// --- CONFIGURATION DES QUESTIONS ---
-// Modifie ce tableau pour ajouter tes propres questions et réponses.
-const quizData = [
-    {
-        question: "What is your favorite food?",
-        answers: ["Pizza", "Burger", "Pasta", "Sushi"]
-    },
-    {
-        question: "What is your favorite color?",
-        answers: ["Blue", "Red", "Black", "Green"]
-    },
-    {
-        question: "What is your favorite drink?",
-        answers: ["Water", "Soda", "Juice", "Coffee"]
-    },
-    {
-        question: "What is your favorite animal?",
-        answers: ["Dog", "Cat", "Lion", "Dolphin"]
-    },
-    {
-        question: "What is your favorite season?",
-        answers: ["Summer", "Winter", "Spring", "Autumn"]
-    },
-    {
-        question: "Do you prefer morning or night?",
-        answers: ["Morning", "Night", "Both", "Neither"]
-    },
-    {
-        question: "What type of music do you like?",
-        answers: ["Pop", "Rap", "Rock", "Chill"]
-    },
-    {
-        question: "What is your favorite hobby?",
-        answers: ["Gaming", "Sports", "Watching movies", "Reading"]
-    },
-    {
-        question: "Which social media do you use the most?",
-        answers: ["Instagram", "TikTok", "YouTube", "Snapchat"]
-    },
-    {
-        question: "What is your favorite movie genre?",
-        answers: ["Action", "Comedy", "Horror", "Romance"]
-    },
-    {
-        question: "What is your favorite game?",
-        answers: ["FIFA", "Fortnite", "Minecraft", "GTA"]
-    },
-    {
-        question: "Where would you like to travel?",
-        answers: ["USA", "Dubai", "Japan", "Paris"]
-    },
-    {
-        question: "What is your favorite dessert?",
-        answers: ["Ice cream", "Cake", "Chocolate", "Donuts"]
-    },
-    {
-        question: "Do you prefer sweet or salty food?",
-        answers: ["Sweet", "Salty", "Both", "Neither"]
-    },
-    {
-        question: "What annoys me the most?",
-        answers: ["Noise", "Waiting", "Lies", "Being ignored"]
-    },
-    {
-        question: "What makes me happy?",
-        answers: ["Friends", "Money", "Success", "Relaxing"]
-    },
-    {
-        question: "What superpower would I want?",
-        answers: ["Flying", "Invisibility", "Time travel", "Mind reading"]
-    },
-    {
-        question: "What is your dream job?",
-        answers: ["Content Creator", "Entrepreneur", "Artist", "Doctor"]
-    },
-    {
-        question: "What is your favorite clothing style?",
-        answers: ["Streetwear", "Casual", "Classy", "Sportswear"]
-    },
-    {
-        question: "What is your biggest fear?",
-        answers: ["Heights", "Spiders", "Failure", "Death"]
-    },
-    {
-        question: "What is your favorite sport?",
-        answers: ["Football", "Basketball", "Tennis", "None"]
-    },
-    {
-        question: "What phone brand do I prefer?",
-        answers: ["Apple", "Samsung", "Google", "Other"]
-    },
-    {
-        question: "What is your favorite fast food?",
-        answers: ["McDonald", "KFC", "Burger King", "Subway"]
-    },
-    {
-        question: "Where do I spend most of my money?",
-        answers: ["Food", "Clothes", "Games", "Tech"]
-    },
-    {
-        question: "What is your favorite fruit?",
-        answers: ["Apple", "Banana", "Strawberry", "Mango"]
-    },
-    {
-        question: "What time do you usually wake up?",
-        answers: ["Early (before 7 AM)", "Morning (7–9 AM)", "Late (after 9 AM)", "It depends"]
-    },
-    {
-        question: "What is your favorite day of the week?",
-        answers: ["Monday", "Wednesday", "Friday", "Sunday"]
-    },
-    {
-        question: "What is your favorite subject?",
-        answers: ["Math", "Science", "Languages", "History"]
-    },
-    {
-        question: "What is your favorite snack?",
-        answers: ["Chips", "Chocolate", "Cookies", "Popcorn"]
-    },
-    {
-        question: "What is your favorite weather?",
-        answers: ["Sunny", "Rainy", "Cloudy", "Windy"]
-    },
-    {
-        question: "Do you like surprises?",
-        answers: ["Yes", "No", "Sometimes", "Only good ones"]
-    },
-    {
-        question: "How do you usually communicate?",
-        answers: ["Texting", "Calling", "Voice messages", "In person"]
-    },
-    {
-        question: "What is your favorite app?",
-        answers: ["TikTok", "Instagram", "YouTube", "WhatsApp"]
-    },
-    {
-        question: "What is your biggest goal?",
-        answers: ["Be rich", "Be happy", "Be famous", "Travel the world"]
-    },
-    {
-        question: "What do you do first in the morning?",
-        answers: ["Check phone", "Eat breakfast", "Go back to sleep", "Get ready"]
-    },
-    {
-        question: "What is your favorite type of content?",
-        answers: ["Videos", "Photos", "Stories", "Live streams"]
-    },
-    {
-        question: "What is your favorite place to relax?",
-        answers: ["Home", "Beach", "Park", "Bed"]
-    }
-];
-// -----------------------------------
+// ============================================================
+// LANGUAGE STATE
+// ============================================================
+let currentLang = 'fr';
+try { currentLang = localStorage.getItem('lang') || 'fr'; } catch(e) {}
+let T = TRANSLATIONS[currentLang];
 
+// ============================================================
+// LANGUAGE OVERLAY (shown on every entry)
+// ============================================================
+const langOverlay = document.getElementById('lang-overlay');
+
+document.querySelectorAll('.lang-overlay-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const chosen = btn.dataset.lang;
+        langOverlay.style.opacity = '0';
+        langOverlay.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => {
+            langOverlay.classList.add('hidden');
+            langOverlay.style.opacity = '';
+        }, 300);
+        applyLanguage(chosen);
+    });
+});
+
+// ============================================================
+// QUIZ STATE
+// ============================================================
 const TARGET_QUESTIONS = 10;
 
-// State
 let isChallengeMode = false;
 let creatorName = "";
 let correctAnswers = [];
 let questionOrder = [];
 let unusedPool = [];
-
 let currentQuestionIndex = 0;
 let userAnswers = [];
 let score = 0;
 
+// ============================================================
 // DOM Elements
-const homeView = document.getElementById('home-view');
-const quizView = document.getElementById('quiz-view');
-const mainActionBtn = document.getElementById('main-action-btn');
-const btnText = mainActionBtn.querySelector('.btn-text');
+// ============================================================
+const homeView       = document.getElementById('home-view');
+const quizView       = document.getElementById('quiz-view');
+const mainActionBtn  = document.getElementById('main-action-btn');
+const btnText        = mainActionBtn.querySelector('.btn-text');
 const challengeSubtitle = document.getElementById('challenge-subtitle');
 
-const nameStep = document.getElementById('name-step');
-const questionStep = document.getElementById('question-step');
-const resultStep = document.getElementById('result-step');
+const nameStep       = document.getElementById('name-step');
+const questionStep   = document.getElementById('question-step');
+const resultStep     = document.getElementById('result-step');
 
-const namePrompt = document.getElementById('name-prompt');
+const nameTitleEl    = document.getElementById('name-title');
+const namePrompt     = document.getElementById('name-prompt');
 const playerNameInput = document.getElementById('player-name');
-const beginQuizBtn = document.getElementById('begin-quiz-btn');
+const beginQuizBtn   = document.getElementById('begin-quiz-btn');
+const nameErrorEl    = document.getElementById('name-error');
 
-const questionText = document.getElementById('question-text');
+const questionText   = document.getElementById('question-text');
 const answersContainer = document.getElementById('answers-container');
-const progressFill = document.getElementById('progress-fill');
+const progressFill   = document.getElementById('progress-fill');
 
-const btnBack = document.getElementById('btn-back');
-const btnSkip = document.getElementById('btn-skip');
+const btnBack        = document.getElementById('btn-back');
+const btnSkip        = document.getElementById('btn-skip');
 
-const resultTitle = document.getElementById('result-title');
-const scoreDisplay = document.getElementById('score-display');
-const finalScoreEl = document.getElementById('final-score');
-const totalScoreEl = document.getElementById('total-score');
-const engagementText = document.getElementById('engagement-text');
-const actionSection = document.getElementById('action-section');
+const resultTitle    = document.getElementById('result-title');
+const scoreDisplay   = document.getElementById('score-display');
+const finalScoreEl   = document.getElementById('final-score');
+const totalScoreEl   = document.getElementById('total-score');
+const engagementText    = document.getElementById('engagement-text');
+const actionSection     = document.getElementById('action-section');
+const themeToggleBtn    = document.getElementById('theme-toggle');
 
+// ============================================================
+// LANGUAGE SWITCHING
+// ============================================================
+function applyLanguage(lang) {
+    currentLang = lang;
+    T = TRANSLATIONS[lang];
+    try { localStorage.setItem('lang', lang); } catch(e) {}
+
+    // RTL / LTR
+    document.documentElement.dir = T.dir;
+    document.documentElement.lang = lang;
+
+    // Static UI strings
+    playerNameInput.placeholder = T.namePlaceholder;
+    beginQuizBtn.textContent    = T.continueBtn;
+    nameErrorEl.textContent     = T.nameError;
+    nameTitleEl.textContent     = T.nameTitle;
+    btnBack.innerHTML           = T.backBtn;
+    btnSkip.innerHTML           = T.skipBtn;
+
+    // Theme button
+    const isLight = document.body.classList.contains('light-theme');
+    themeToggleBtn.textContent  = isLight ? T.darkMode : T.lightMode;
+
+    // Main button & subtitle (home view)
+    if (isChallengeMode) {
+        btnText.textContent = T.acceptBtn;
+        challengeSubtitle.textContent = T.challengeSubtitle(creatorName);
+        namePrompt.textContent = T.namePromptChallenger;
+    } else {
+        btnText.textContent = T.createBtn;
+        namePrompt.textContent = T.namePromptCreator;
+    }
+
+    // Highlight active lang button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // Rebuild current quiz step if visible
+    if (questionStep.classList.contains('active-step')) {
+        loadQuestion();
+    } else if (resultStep.classList.contains('active-step')) {
+        showResults();
+    }
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+});
+
+// ============================================================
+// INIT
+// ============================================================
 function init() {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams    = new URLSearchParams(window.location.search);
     const creatorParam = urlParams.get('c');
     const answersParam = urlParams.get('a');
-    const orderParam = urlParams.get('q');
+    const orderParam   = urlParams.get('q');
 
-    // Track total visits
     try {
         let visits = parseInt(localStorage.getItem('site_visits') || '0');
         localStorage.setItem('site_visits', visits + 1);
@@ -211,48 +141,41 @@ function init() {
         creatorName = decodeURIComponent(creatorParam);
         try {
             correctAnswers = atob(answersParam).split(',').map(Number);
-            questionOrder = atob(orderParam).split(',').map(Number);
-
+            questionOrder  = atob(orderParam).split(',').map(Number);
             totalScoreEl.textContent = questionOrder.length * 2;
             btnSkip.style.display = 'none';
-
-            // UI Updates for Challenge Mode
-            challengeSubtitle.textContent = `${creatorName} challenged you! Prove you know them.`;
             challengeSubtitle.style.display = 'block';
-            btnText.textContent = "ACCEPT CHALLENGE";
-            namePrompt.textContent = "What's your name, challenger?";
 
-            // Track challenges taken
             try {
                 let challenges = parseInt(localStorage.getItem('challenges_taken') || '0');
                 localStorage.setItem('challenges_taken', challenges + 1);
             } catch(e) {}
-
         } catch (e) {
             console.error("Invalid link");
             isChallengeMode = false;
         }
     } else {
-        // UI Updates for Creation Mode
         challengeSubtitle.style.display = 'none';
-        btnText.textContent = "CREATE MY FRIENDSHIP QUIZ";
-        namePrompt.textContent = "What's your name, creator?";
-
         totalScoreEl.textContent = TARGET_QUESTIONS * 2;
         btnSkip.style.display = 'inline-block';
 
-        // Setup random question order
-        let shuffled = Array.from({ length: quizData.length }, (_, i) => i);
+        const questions = T.questions;
+        let shuffled = Array.from({ length: questions.length }, (_, i) => i);
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
-
         questionOrder = shuffled.slice(0, TARGET_QUESTIONS);
-        unusedPool = shuffled.slice(TARGET_QUESTIONS);
+        unusedPool    = shuffled.slice(TARGET_QUESTIONS);
     }
+
+    // Apply saved lang
+    applyLanguage(currentLang);
 }
 
+// ============================================================
+// VIEW / STEP HELPERS
+// ============================================================
 function showView(viewElement) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
     viewElement.classList.add('active-view');
@@ -263,6 +186,9 @@ function showQuizStep(stepElement) {
     stepElement.classList.add('active-step');
 }
 
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
 mainActionBtn.addEventListener('click', () => {
     showView(quizView);
     showQuizStep(nameStep);
@@ -270,13 +196,17 @@ mainActionBtn.addEventListener('click', () => {
 
 beginQuizBtn.addEventListener('click', () => {
     const name = playerNameInput.value.trim();
-    if (!name) return alert("Please enter a name!");
+    if (!name) {
+        nameErrorEl.style.display = 'block';
+        nameErrorEl.style.animation = 'none';
+        void nameErrorEl.offsetWidth;
+        nameErrorEl.style.animation = 'shake 0.3s ease';
+        return;
+    }
+    nameErrorEl.style.display = 'none';
 
-    // Store player name
     if (!isChallengeMode) {
         creatorName = name;
-        
-        // Track quizzes created
         try {
             let quizzes = parseInt(localStorage.getItem('quizzes_created') || '0');
             localStorage.setItem('quizzes_created', quizzes + 1);
@@ -286,7 +216,6 @@ beginQuizBtn.addEventListener('click', () => {
     startQuiz();
 });
 
-// Navigation logic
 btnBack.addEventListener('click', () => {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
@@ -302,10 +231,13 @@ btnSkip.addEventListener('click', () => {
         userAnswers[currentQuestionIndex] = undefined;
         loadQuestion();
     } else {
-        alert("No more alternative questions available!");
+        alert("No more alternative questions!");
     }
 });
 
+// ============================================================
+// QUIZ LOGIC
+// ============================================================
 function startQuiz() {
     currentQuestionIndex = 0;
     userAnswers = [];
@@ -315,18 +247,19 @@ function startQuiz() {
 }
 
 function loadQuestion() {
+    const questions = T.questions;
     const originalIndex = questionOrder[currentQuestionIndex];
-    const q = quizData[originalIndex];
+    const q = questions[originalIndex];
+
     if (isChallengeMode) {
-        questionText.textContent = `What did ${creatorName} answer to: "${q.question}"`;
+        questionText.textContent = T.challengeQuestion(creatorName, q.question);
     } else {
         questionText.textContent = q.question;
     }
 
     answersContainer.innerHTML = '';
 
-    // Progress
-    const progress = ((currentQuestionIndex) / questionOrder.length) * 100;
+    const progress = (currentQuestionIndex / questionOrder.length) * 100;
     progressFill.style.width = `${progress}%`;
 
     q.answers.forEach((answer, index) => {
@@ -371,33 +304,27 @@ function handleAnswer(selectedIndex) {
 }
 
 function showResults() {
-    progressFill.style.width = `100%`;
+    progressFill.style.width = '100%';
     showQuizStep(resultStep);
-
     actionSection.innerHTML = '';
 
     let answeredCount = 0;
     for (let i = 0; i < questionOrder.length; i++) {
-        if (userAnswers[i] !== undefined && userAnswers[i] !== -1) {
-            answeredCount++;
-        }
+        if (userAnswers[i] !== undefined && userAnswers[i] !== -1) answeredCount++;
     }
 
     if (answeredCount < questionOrder.length) {
-        resultTitle.textContent = "INCOMPLETE!";
+        resultTitle.textContent = T.incomplete;
         scoreDisplay.style.display = 'none';
-        engagementText.textContent = `You must answer all ${questionOrder.length} questions. You missed ${questionOrder.length - answeredCount} question(s).`;
+        engagementText.textContent = T.incompleteText(questionOrder.length, questionOrder.length - answeredCount);
 
         const goBackBtn = document.createElement('button');
         goBackBtn.classList.add('action-btn', 'primary-btn');
-        goBackBtn.textContent = "COMPLETE QUIZ";
+        goBackBtn.textContent = T.completeBtn;
         goBackBtn.addEventListener('click', () => {
             let firstUnanswered = 0;
             for (let i = 0; i < questionOrder.length; i++) {
-                if (userAnswers[i] === undefined || userAnswers[i] === -1) {
-                    firstUnanswered = i;
-                    break;
-                }
+                if (userAnswers[i] === undefined || userAnswers[i] === -1) { firstUnanswered = i; break; }
             }
             currentQuestionIndex = firstUnanswered;
             showQuizStep(questionStep);
@@ -408,54 +335,50 @@ function showResults() {
     }
 
     if (isChallengeMode) {
-        // Calculate score safely at the end
         score = 0;
         for (let i = 0; i < questionOrder.length; i++) {
-            if (userAnswers[i] !== undefined && userAnswers[i] !== -1 && userAnswers[i] === correctAnswers[i]) {
-                score += 2;
-            }
+            if (userAnswers[i] !== undefined && userAnswers[i] !== -1 && userAnswers[i] === correctAnswers[i]) score += 2;
         }
 
-        resultTitle.textContent = "CHALLENGE RESULT";
+        resultTitle.textContent = T.resultTitle;
         scoreDisplay.style.display = 'block';
         finalScoreEl.textContent = score;
-        engagementText.textContent = `You know ${creatorName} ${Math.round((score / (questionOrder.length * 2)) * 100)}% well!`;
+        engagementText.textContent = T.engagementScore(creatorName, Math.round((score / (questionOrder.length * 2)) * 100));
 
+        // WhatsApp button
         const shareScoreBtn = document.createElement('button');
-        shareScoreBtn.classList.add('action-btn', 'share-wa-btn');
-        shareScoreBtn.style.marginBottom = '1rem';
-        shareScoreBtn.textContent = "SEND SCORE (WHATSAPP)";
+        shareScoreBtn.classList.add('action-btn');
+        shareScoreBtn.style.background    = 'rgba(37, 211, 102, 0.1)';
+        shareScoreBtn.style.borderColor   = '#25D366';
+        shareScoreBtn.style.color         = '#25D366';
+        shareScoreBtn.style.boxShadow     = '0 0 10px rgba(37, 211, 102, 0.2)';
+        shareScoreBtn.textContent = T.whatsappBtn;
         shareScoreBtn.addEventListener('click', () => {
-            const text = `I just took your secretmind quiz and got ${score}/${questionOrder.length * 2}! 🧠 Can anyone beat me?`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://wa.me/?text=${encodeURIComponent(T.whatsappText(score, questionOrder.length * 2))}`, '_blank');
         });
         actionSection.appendChild(shareScoreBtn);
 
+        // Share / native share button
         const shareTiktokIgBtn = document.createElement('button');
-        shareTiktokIgBtn.classList.add('action-btn', 'share-ig-btn');
-        shareTiktokIgBtn.style.marginBottom = '1rem';
-        shareTiktokIgBtn.textContent = "SEND SCORE";
+        shareTiktokIgBtn.classList.add('action-btn');
+        shareTiktokIgBtn.style.background  = 'rgba(123, 47, 247, 0.2)';
+        shareTiktokIgBtn.style.borderColor = 'var(--secondary-color)';
+        shareTiktokIgBtn.style.color       = 'var(--text-color)';
+        shareTiktokIgBtn.style.boxShadow   = '0 0 15px rgba(241, 7, 163, 0.3)';
+        shareTiktokIgBtn.textContent = T.shareBtn;
         shareTiktokIgBtn.addEventListener('click', async () => {
-            const text = `I just took your secretmind quiz and got ${score}/${questionOrder.length * 2}! 🧠 Can anyone beat me?`;
-
-            // Ouvre le menu de partage natif (parfait pour envoyer sur TikTok/IG sur mobile)
+            const text = T.shareText(score, questionOrder.length * 2);
             if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'My Quiz Score',
-                        text: text
-                    });
-                } catch (err) {
-                    console.log('Share canceled', err);
-                }
+                try { await navigator.share({ title: 'My Quiz Score', text }); } catch(e) {}
             } else {
-                // Sur PC, on copie simplement le texte
                 navigator.clipboard.writeText(text).then(() => {
-                    shareTiktokIgBtn.textContent = "SCORE COPIED !";
-                    shareTiktokIgBtn.classList.add('btn-copied');
+                    shareTiktokIgBtn.textContent = T.scoreCopied;
+                    shareTiktokIgBtn.style.color = '#0F0F1A';
+                    shareTiktokIgBtn.style.backgroundColor = 'var(--accent-color)';
                     setTimeout(() => {
-                        shareTiktokIgBtn.textContent = "SEND SCORE";
-                        shareTiktokIgBtn.classList.remove('btn-copied');
+                        shareTiktokIgBtn.textContent = T.shareBtn;
+                        shareTiktokIgBtn.style.color = 'var(--text-color)';
+                        shareTiktokIgBtn.style.backgroundColor = 'transparent';
                     }, 2000);
                 });
             }
@@ -464,31 +387,36 @@ function showResults() {
 
         const createOwnBtn = document.createElement('button');
         createOwnBtn.classList.add('action-btn');
-        createOwnBtn.textContent = "CREATE YOUR OWN QUIZ";
+        createOwnBtn.textContent = T.createOwnBtn;
         createOwnBtn.addEventListener('click', () => {
             window.location.href = window.location.origin + window.location.pathname;
         });
         actionSection.appendChild(createOwnBtn);
+
     } else {
-        resultTitle.textContent = "QUIZ CREATED!";
+        resultTitle.textContent = T.resultCreated;
         scoreDisplay.style.display = 'none';
-        engagementText.textContent = "Your quiz is ready. Share the link with your friends to see who knows you best!";
+        engagementText.textContent = T.engagementReady;
 
         const encodedAnswers = btoa(userAnswers.join(','));
-        const encodedOrder = btoa(questionOrder.join(','));
-        const link = `${window.location.origin}${window.location.pathname}?c=${encodeURIComponent(creatorName)}&q=${encodedOrder}&a=${encodedAnswers}`;
+        const encodedOrder   = btoa(questionOrder.join(','));
+        const link = `${window.location.origin}${window.location.pathname}?c=${encodeURIComponent(creatorName)}&q=${encodedOrder}&a=${encodedAnswers}&l=${currentLang}`;
 
         const copyBtn = document.createElement('button');
         copyBtn.classList.add('action-btn', 'primary-btn');
-        copyBtn.textContent = "COPY LINK";
+        copyBtn.textContent = T.copyLinkBtn;
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(`🔥 Prove you know me! Click here to take my friendship challenge: ${link}`)
+            navigator.clipboard.writeText(T.copyLinkText(link))
                 .then(() => {
-                    copyBtn.textContent = "LINK COPIED! ✅";
-                    copyBtn.classList.add('btn-copied');
+                    copyBtn.textContent = T.linkCopied;
+                    copyBtn.style.color = '#0F0F1A';
+                    copyBtn.style.background = 'var(--accent-color)';
+                    copyBtn.style.boxShadow = '0 0 20px var(--accent-color)';
                     setTimeout(() => {
-                        copyBtn.textContent = "COPY LINK";
-                        copyBtn.classList.remove('btn-copied');
+                        copyBtn.textContent = T.copyLinkBtn;
+                        copyBtn.style.color = '';
+                        copyBtn.style.background = '';
+                        copyBtn.style.boxShadow = '';
                     }, 2000);
                 })
                 .catch(() => alert("Error copying link. Link: " + link));
@@ -497,28 +425,28 @@ function showResults() {
     }
 }
 
-// Initialize logic
+// ============================================================
+// INITIALIZE
+// ============================================================
 init();
 
-// --- THEME TOGGLE LOGIC ---
-const themeToggleBtn = document.getElementById('theme-toggle');
-let currentTheme = 'dark';
-try {
-    currentTheme = localStorage.getItem('theme') || 'dark';
-} catch(e) {}
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+let savedTheme = 'light';
+try { savedTheme = localStorage.getItem('theme') || 'light'; } catch(e) {}
 
-if (currentTheme === 'light') {
-    document.body.classList.add('light-theme');
-    themeToggleBtn.textContent = 'Dark Mode';
+if (savedTheme === 'dark') {
+    document.body.classList.remove('light-theme');
+    themeToggleBtn.textContent = T.lightMode;
 } else {
-    themeToggleBtn.textContent = 'Light Mode';
+    document.body.classList.add('light-theme');
+    themeToggleBtn.textContent = T.darkMode;
 }
 
 themeToggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('light-theme');
     const isLight = document.body.classList.contains('light-theme');
-    themeToggleBtn.textContent = isLight ? 'Dark Mode' : 'Light Mode';
-    try {
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    } catch(e) {}
+    themeToggleBtn.textContent = isLight ? T.darkMode : T.lightMode;
+    try { localStorage.setItem('theme', isLight ? 'light' : 'dark'); } catch(e) {}
 });

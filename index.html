@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -11,9 +11,32 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="light-theme">
     <div id="app">
-        <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">Light Mode</button>
+
+        <!-- Language Selection Overlay -->
+        <div id="lang-overlay" class="lang-overlay">
+            <div class="lang-overlay-box">
+                <h2 class="lang-overlay-title">secretmind</h2>
+                <p class="lang-overlay-subtitle">Choose your language / Choisissez votre langue / اختر لغتك</p>
+                <div class="lang-overlay-buttons">
+                    <button class="lang-overlay-btn" data-lang="fr">🇫🇷 Français</button>
+                    <button class="lang-overlay-btn" data-lang="en">🇬🇧 English</button>
+                    <button class="lang-overlay-btn" data-lang="ar">🇸🇦 العربية</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Controls Bar -->
+        <div class="top-controls">
+            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">Light Mode</button>
+            <div class="lang-selector">
+                <button class="lang-btn active" data-lang="fr">🇫🇷 FR</button>
+                <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+                <button class="lang-btn" data-lang="ar">🇸🇦 AR</button>
+            </div>
+        </div>
+
         <!-- Home View -->
         <main id="home-view" class="view active-view">
             <header class="header">
@@ -24,7 +47,7 @@
 
             <nav class="links-container">
                 <button id="main-action-btn" class="link-btn primary-btn">
-                    <span class="btn-text">CREATE MY FRIENDSHIP QUIZ</span>
+                    <span class="btn-text">CRÉER MON QUIZ AMITIÉ</span>
                     <span class="btn-glitch"></span>
                 </button>
             </nav>
@@ -34,12 +57,13 @@
         <main id="quiz-view" class="view">
             <!-- Step 1: Name Input -->
             <section id="name-step" class="quiz-step">
-                <h2 class="quiz-title">IDENTIFICATION</h2>
+                <h2 id="name-title" class="quiz-title">IDENTIFICATION</h2>
                 <div class="input-group">
-                    <label id="name-prompt" for="player-name">What's your name?</label>
-                    <input type="text" id="player-name" placeholder="Enter your name..." autocomplete="off">
+                    <label id="name-prompt" for="player-name">Quel est ton prénom ?</label>
+                    <input type="text" id="player-name" placeholder="Entre ton prénom..." autocomplete="off">
+                    <p id="name-error" class="error-msg" style="display: none;">Le prénom est obligatoire pour continuer !</p>
                 </div>
-                <button id="begin-quiz-btn" class="action-btn">Continue</button>
+                <button id="begin-quiz-btn" class="action-btn">CONTINUER</button>
             </section>
 
             <!-- Step 2: Questions -->
@@ -55,15 +79,15 @@
 
                     <!-- Navigation Buttons -->
                     <div class="quiz-navigation">
-                        <button id="btn-back" class="nav-btn">&larr; Back</button>
-                        <button id="btn-skip" class="nav-btn">Skip &rarr;</button>
+                        <button id="btn-back" class="nav-btn">&larr; Retour</button>
+                        <button id="btn-skip" class="nav-btn">Passer &rarr;</button>
                     </div>
                 </div>
             </section>
 
             <!-- Step 3: Result -->
             <section id="result-step" class="quiz-step">
-                <h2 id="result-title" class="result-title">RESULT</h2>
+                <h2 id="result-title" class="result-title">RÉSULTAT</h2>
                 <div id="score-display" class="score-display" style="display: none;">
                     <span id="final-score">0</span><span class="score-max">/<span id="total-score">5</span></span>
                 </div>
@@ -75,6 +99,7 @@
         </main>
     </div>
 
+    <script src="translations.js"></script>
     <script src="script.js"></script>
 </body>
 
