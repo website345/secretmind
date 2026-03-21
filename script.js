@@ -200,6 +200,10 @@ function init() {
     const answersParam = urlParams.get('a');
     const orderParam = urlParams.get('q');
 
+    // Track total visits
+    let visits = parseInt(localStorage.getItem('site_visits') || '0');
+    localStorage.setItem('site_visits', visits + 1);
+
     if (creatorParam && answersParam && orderParam) {
         isChallengeMode = true;
         creatorName = decodeURIComponent(creatorParam);
@@ -215,6 +219,10 @@ function init() {
             challengeSubtitle.style.display = 'block';
             btnText.textContent = "ACCEPT CHALLENGE";
             namePrompt.textContent = "What's your name, challenger?";
+
+            // Track challenges taken
+            let challenges = parseInt(localStorage.getItem('challenges_taken') || '0');
+            localStorage.setItem('challenges_taken', challenges + 1);
 
         } catch (e) {
             console.error("Invalid link");
@@ -263,6 +271,10 @@ beginQuizBtn.addEventListener('click', () => {
     // Store player name
     if (!isChallengeMode) {
         creatorName = name;
+        
+        // Track quizzes created
+        let quizzes = parseInt(localStorage.getItem('quizzes_created') || '0');
+        localStorage.setItem('quizzes_created', quizzes + 1);
     }
 
     startQuiz();
@@ -404,18 +416,45 @@ function showResults() {
         engagementText.textContent = `You know ${creatorName} ${Math.round((score / (questionOrder.length * 2)) * 100)}% well!`;
 
         const shareScoreBtn = document.createElement('button');
-        shareScoreBtn.classList.add('action-btn');
+        shareScoreBtn.classList.add('action-btn', 'share-wa-btn');
         shareScoreBtn.style.marginBottom = '1rem';
-        shareScoreBtn.style.background = 'rgba(37, 211, 102, 0.1)';
-        shareScoreBtn.style.borderColor = '#25D366';
-        shareScoreBtn.style.color = '#25D366';
-        shareScoreBtn.style.boxShadow = '0 0 10px rgba(37, 211, 102, 0.2)';
         shareScoreBtn.textContent = "SEND SCORE (WHATSAPP)";
         shareScoreBtn.addEventListener('click', () => {
             const text = `I just took your secretmind quiz and got ${score}/${questionOrder.length * 2}! 🧠 Can anyone beat me?`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         });
         actionSection.appendChild(shareScoreBtn);
+
+        const shareTiktokIgBtn = document.createElement('button');
+        shareTiktokIgBtn.classList.add('action-btn', 'share-ig-btn');
+        shareTiktokIgBtn.style.marginBottom = '1rem';
+        shareTiktokIgBtn.textContent = "SEND SCORE";
+        shareTiktokIgBtn.addEventListener('click', async () => {
+            const text = `I just took your secretmind quiz and got ${score}/${questionOrder.length * 2}! 🧠 Can anyone beat me?`;
+
+            // Ouvre le menu de partage natif (parfait pour envoyer sur TikTok/IG sur mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'My Quiz Score',
+                        text: text
+                    });
+                } catch (err) {
+                    console.log('Share canceled', err);
+                }
+            } else {
+                // Sur PC, on copie simplement le texte
+                navigator.clipboard.writeText(text).then(() => {
+                    shareTiktokIgBtn.textContent = "SCORE COPIED !";
+                    shareTiktokIgBtn.classList.add('btn-copied');
+                    setTimeout(() => {
+                        shareTiktokIgBtn.textContent = "SEND SCORE";
+                        shareTiktokIgBtn.classList.remove('btn-copied');
+                    }, 2000);
+                });
+            }
+        });
+        actionSection.appendChild(shareTiktokIgBtn);
 
         const createOwnBtn = document.createElement('button');
         createOwnBtn.classList.add('action-btn');
@@ -440,12 +479,10 @@ function showResults() {
             navigator.clipboard.writeText(`🔥 Prove you know me! Click here to take my friendship challenge: ${link}`)
                 .then(() => {
                     copyBtn.textContent = "LINK COPIED! ✅";
-                    copyBtn.style.color = "#000";
-                    copyBtn.style.backgroundColor = "var(--accent-color)";
+                    copyBtn.classList.add('btn-copied');
                     setTimeout(() => {
                         copyBtn.textContent = "COPY LINK";
-                        copyBtn.style.color = "var(--accent-color)";
-                        copyBtn.style.backgroundColor = "rgba(127, 0, 255, 0.1)";
+                        copyBtn.classList.remove('btn-copied');
                     }, 2000);
                 })
                 .catch(() => alert("Error copying link. Link: " + link));
@@ -456,3 +493,21 @@ function showResults() {
 
 // Initialize logic
 init();
+
+// --- THEME TOGGLE LOGIC ---
+const themeToggleBtn = document.getElementById('theme-toggle');
+const currentTheme = localStorage.getItem('theme') || 'dark';
+
+if (currentTheme === 'light') {
+    document.body.classList.add('light-theme');
+    themeToggleBtn.textContent = 'Dark Mode';
+} else {
+    themeToggleBtn.textContent = 'Light Mode';
+}
+
+themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    themeToggleBtn.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+});
