@@ -142,7 +142,7 @@ function init() {
         try {
             correctAnswers = atob(answersParam).split(',').map(Number);
             questionOrder  = atob(orderParam).split(',').map(Number);
-            totalScoreEl.textContent = questionOrder.length * 2;
+            totalScoreEl.textContent = questionOrder.length;
             btnSkip.style.display = 'none';
             btnBack.style.display = 'none';
             challengeSubtitle.style.display = 'block';
@@ -157,7 +157,7 @@ function init() {
         }
     } else {
         challengeSubtitle.style.display = 'none';
-        totalScoreEl.textContent = TARGET_QUESTIONS * 2;
+        totalScoreEl.textContent = TARGET_QUESTIONS;
         btnSkip.style.display = 'inline-block';
 
         const questions = T.questions;
@@ -188,9 +188,45 @@ function showQuizStep(stepElement) {
 }
 
 // ============================================================
-// EVENT LISTENERS
+// AUDIO & EVENT LISTENERS
 // ============================================================
+let audioCtx;
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+function playTone(freq, type, duration, vol=0.1) {
+    try {
+        initAudio();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+}
+
+function playDing() {
+    playTone(600, 'sine', 0.1, 0.2);
+    setTimeout(() => playTone(800, 'sine', 0.2, 0.2), 100);
+}
+
+function playBuzz() {
+    playTone(150, 'square', 0.3, 0.2);
+}
+
 mainActionBtn.addEventListener('click', () => {
+    initAudio();
     showView(quizView);
     showQuizStep(nameStep);
 });
@@ -283,8 +319,10 @@ function handleAnswer(selectedIndex) {
             const correctIndex = correctAnswers[currentQuestionIndex];
             if (selectedIndex === correctIndex) {
                 buttons[selectedIndex].classList.add('correct');
+                playDing();
             } else {
                 buttons[selectedIndex].classList.add('wrong');
+                playBuzz();
                 if (correctIndex !== -1 && buttons[correctIndex]) {
                     buttons[correctIndex].classList.add('correct');
                 }
@@ -338,13 +376,22 @@ function showResults() {
     if (isChallengeMode) {
         score = 0;
         for (let i = 0; i < questionOrder.length; i++) {
-            if (userAnswers[i] !== undefined && userAnswers[i] !== -1 && userAnswers[i] === correctAnswers[i]) score += 2;
+            if (userAnswers[i] !== undefined && userAnswers[i] !== -1 && userAnswers[i] === correctAnswers[i]) score += 1;
         }
 
         resultTitle.textContent = T.resultTitle;
         scoreDisplay.style.display = 'block';
         finalScoreEl.textContent = score;
-        engagementText.textContent = T.engagementScore(creatorName, Math.round((score / (questionOrder.length * 2)) * 100));
+        engagementText.innerHTML = T.engagementGrade(creatorName, score, questionOrder.length);
+
+        if ((score / questionOrder.length) >= 0.8 && window.confetti) {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                zIndex: 9999
+            });
+        }
 
         // WhatsApp button
         const shareScoreBtn = document.createElement('button');
@@ -355,7 +402,7 @@ function showResults() {
         shareScoreBtn.style.boxShadow     = '0 0 10px rgba(37, 211, 102, 0.2)';
         shareScoreBtn.textContent = T.whatsappBtn;
         shareScoreBtn.addEventListener('click', () => {
-            window.open(`https://wa.me/?text=${encodeURIComponent(T.whatsappText(score, questionOrder.length * 2))}`, '_blank');
+            window.open(`https://wa.me/?text=${encodeURIComponent(T.whatsappText(score, questionOrder.length))}`, '_blank');
         });
         actionSection.appendChild(shareScoreBtn);
 
@@ -368,7 +415,7 @@ function showResults() {
         shareTiktokIgBtn.style.boxShadow   = '0 0 15px rgba(241, 7, 163, 0.3)';
         shareTiktokIgBtn.textContent = T.shareBtn;
         shareTiktokIgBtn.addEventListener('click', async () => {
-            const text = T.shareText(score, questionOrder.length * 2);
+            const text = T.shareText(score, questionOrder.length);
             if (navigator.share) {
                 try { await navigator.share({ title: 'My Quiz Score', text }); } catch(e) {}
             } else {

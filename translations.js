@@ -22,6 +22,16 @@ const TRANSLATIONS = {
         incompleteText: (total, missed) => `Tu dois répondre aux ${total} questions. Il t'en manque ${missed}.`,
         completeBtn: "COMPLÉTER LE QUIZ",
         engagementScore: (name, pct) => `Tu connais ${name} à ${pct}% !`,
+        engagementGrade: (name, score, total) => {
+            let pct = Math.round((score / total) * 100);
+            let grade = "";
+            if (pct === 100) grade = "À la vie, à la mort !";
+            else if (pct >= 80) grade = "Excellents amis !";
+            else if (pct >= 50) grade = "On est de bons potes.";
+            else if (pct >= 20) grade = "Connaissances lointaines...";
+            else grade = "Mais on se connaît en fait ?";
+            return `<strong>${grade}</strong><br>Tu connais ${name} à ${pct}% !`;
+        },
         engagementReady: "Ton quiz est prêt. Partage le lien avec tes amis pour voir qui te connaît le mieux !",
         whatsappBtn: "ENVOYER LE SCORE (WHATSAPP)",
         shareBtn: "ENVOYER LE SCORE",
@@ -81,6 +91,16 @@ const TRANSLATIONS = {
         incompleteText: (total, missed) => `You must answer all ${total} questions. You missed ${missed}.`,
         completeBtn: "COMPLETE QUIZ",
         engagementScore: (name, pct) => `You know ${name} ${pct}% well!`,
+        engagementGrade: (name, score, total) => {
+            let pct = Math.round((score / total) * 100);
+            let grade = "";
+            if (pct === 100) grade = "Best friends forever!";
+            else if (pct >= 80) grade = "Great friends!";
+            else if (pct >= 50) grade = "We are good buddies.";
+            else if (pct >= 20) grade = "Distant acquaintances...";
+            else grade = "Do we even know each other?";
+            return `<strong>${grade}</strong><br>You know ${name} ${pct}% well!`;
+        },
         engagementReady: "Your quiz is ready. Share the link with your friends to see who knows you best!",
         whatsappBtn: "SEND SCORE (WHATSAPP)",
         shareBtn: "SEND SCORE",
@@ -140,6 +160,16 @@ const TRANSLATIONS = {
         incompleteText: (total, missed) => `يجب عليك الإجابة على ${total} سؤال. فاتتك ${missed} أسئلة.`,
         completeBtn: "إكمال الاختبار",
         engagementScore: (name, pct) => `أنت تعرف ${name} بنسبة ${pct}%!`,
+        engagementGrade: (name, score, total) => {
+            let pct = Math.round((score / total) * 100);
+            let grade = "";
+            if (pct === 100) grade = "أصدقاء مدى الحياة!";
+            else if (pct >= 80) grade = "أصدقاء رائعون!";
+            else if (pct >= 50) grade = "نحن أصدقاء جيدون.";
+            else if (pct >= 20) grade = "معارف من بعيد...";
+            else grade = "هل نعرف بعضنا حقًا؟";
+            return `<strong>${grade}</strong><br>أنت تعرف ${name} بنسبة ${pct}%!`;
+        },
         engagementReady: "اختبارك جاهز. شارك الرابط مع أصدقائك لترى من يعرفك أكثر!",
         whatsappBtn: "إرسال النتيجة (واتساب)",
         shareBtn: "إرسال النتيجة",
